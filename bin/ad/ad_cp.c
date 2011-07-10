@@ -841,8 +841,26 @@ static int setfile(const struct stat *fs, int fd)
     islink = !fdval && S_ISLNK(fs->st_mode);
     mode = fs->st_mode & (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO);
 
+#ifdef HAVE_STRUCT_STAT_ST_ATIM
     TIMESPEC_TO_TIMEVAL(&tv[0], &fs->st_atim);
+#else
+#if __BSD_VISIBLE
+    TIMESPEC_TO_TIMEVAL(&tv[0], &fs->st_atimespec);
+#else
+    tv[0]->tv_sec = &fs->st_atime;
+    tv[0]->tv_usec = (&fs->__st_atimensec)*1000;
+#endif
+#endif
+#ifdef HAVE_STRUCT_STAT_ST_MTIM
     TIMESPEC_TO_TIMEVAL(&tv[1], &fs->st_mtim);
+#else
+#if __BSD_VISIBLE
+    TIMESPEC_TO_TIMEVAL(&tv[1], &fs->st_mtimespec);
+#else
+    tv[1]->tv_sec = &fs->st_mtime;
+    tv[1]->tv_usec = (&fs->__st_mtimensec)*1000;
+#endif
+#endif
     if (utimes(to.p_path, tv)) {
         SLOG("utimes: %s", to.p_path);
         rval = 1;

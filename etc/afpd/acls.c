@@ -26,6 +26,9 @@
 #ifdef HAVE_SOLARIS_ACLS
 #include <sys/acl.h>
 #endif
+#ifdef HAVE_SUN_ACLS
+#include <sunacl.h>
+#endif
 #ifdef HAVE_POSIX_ACLS
 #include <sys/acl.h>
 #include <acl/libacl.h>
