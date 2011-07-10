@@ -97,6 +97,10 @@ AC_CACHE_SAVE
 dnl Checks for (v)snprintf
 NETATALK_SNPRINTF_CHECK
 
+dnl Check for high resolution stat.st_atim and stat.st_mtim
+AC_CHECK_MEMBERS([struct stat.st_atim])
+AC_CHECK_MEMBERS([struct stat.st_mtim])
+
 dnl --------------------------------------------------------------------------
 dnl 64bit platform check
 dnl --------------------------------------------------------------------------
@@ -1015,6 +1019,13 @@ if test x"$with_acl_support" = x"yes" ; then
 		AC_MSG_NOTICE(Using solaris ACLs)
 		AC_DEFINE(HAVE_SOLARIS_ACLS,1,[Whether solaris ACLs are available])
 		ACL_LIBS="$ACL_LIBS -lsec"
+		;;
+	*bsd*)
+		AC_MSG_NOTICE(Using SUN ACLs in BSD)
+		AC_DEFINE(HAVE_SOLARIS_ACLS,1,[Whether solaris ACLs are available])
+		AC_DEFINE(HAVE_SUN_ACLS,1,[Whether Sun ACLs are available])
+		ACL_LIBS="$ACL_LIBS -L/usr/local/lib -lsunacl"
+                CFLAGS="-I '/usr/local/include' $CFLAGS"
 		;;
 	*hpux*)
 		AC_MSG_NOTICE(Using HPUX ACLs)

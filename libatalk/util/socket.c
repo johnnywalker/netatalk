@@ -519,6 +519,21 @@ void fdset_del_fd(struct pollfd **fdsetp,
     }
 }
 
+#ifndef OSSH_ALIGNBYTES
+#define OSSH_ALIGNBYTES (sizeof(int) - 1)
+#endif
+#ifndef __CMSG_ALIGN
+#ifndef u_int
+#define u_int unsigned int
+#endif
+#define __CMSG_ALIGN(p) (((u_int)(p) + OSSH_ALIGNBYTES) &~ OSSH_ALIGNBYTES)
+#endif
+
+/* Length of the contents of a control message of length len */
+#ifndef CMSG_LEN
+#define CMSG_LEN(len)   (__CMSG_ALIGN(sizeof(struct cmsghdr)) + (len))
+#endif
+
 /* Length of the space taken up by a padded control message of length len */
 #ifndef CMSG_SPACE
 #define CMSG_SPACE(len) (__CMSG_ALIGN(sizeof(struct cmsghdr)) + __CMSG_ALIGN(len))
