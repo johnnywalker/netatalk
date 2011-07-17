@@ -45,6 +45,8 @@
 #include <atalk/afp.h>
 #include <atalk/uam.h>
 
+#include "uams.h"
+
 #define KEYSIZE 16
 #define PASSWDLEN 64
 #define CRYPTBUFLEN  (KEYSIZE*2)
@@ -751,6 +753,9 @@ UAM_MODULE_EXPORT struct uam_export uams_dhx_pam = {
   UAM_MODULE_VERSION,
   uam_setup, uam_cleanup
 };
+
+UAM_STATIC_MOD(UAMS_DHX, "uams_dhx", &uams_dhx)
+UAM_STATIC_MOD(UAMS_DHX_PAM, "uams_dhx_pam", &uams_dhx_pam)
 
 #endif /* USE_PAM && UAM_DHX */
 

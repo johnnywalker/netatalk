@@ -46,7 +46,10 @@ afpd_SOURCES = \
 afpd_LDADD =  \
 	$(top_builddir)/libatalk/cnid/libcnid.la \
 	$(top_builddir)/libatalk/libatalk.la \
-	@LIBGCRYPT_LIBS@ @ZEROCONF_LIBS@ @QUOTA_LIBS@ @SLP_LIBS@ @WRAP_LIBS@ @LIBADD_DL@ @ACL_LIBS@ @PTHREAD_LIBS@
+	@LIBGCRYPT_LIBS@ @ZEROCONF_LIBS@ @QUOTA_LIBS@ @SLP_LIBS@ @WRAP_LIBS@ @LIBADD_DL@ @ACL_LIBS@ @PTHREAD_LIBS@ \
+        -lc_p \
+        $(top_builddir)/etc/uams/libuams_dhx_pam.la \
+        $(top_builddir)/etc/uams/libuams_dhx2_pam.la
 
 afpd_LDFLAGS = -export-dynamic 
 
@@ -63,7 +66,8 @@ afpd_CFLAGS = \
 	-D_PATH_AFPDSIGCONF=\"$(pkgconfdir)/afp_signature.conf\" \
 	-D_PATH_AFPDUAMPATH=\"$(UAMS_PATH)/\" \
 	-D_PATH_ACL_LDAPCONF=\"$(pkgconfdir)/afp_ldap.conf\" \
-	-D_PATH_AFPDUUIDCONF=\"$(pkgconfdir)/afp_voluuid.conf\"
+	-D_PATH_AFPDUUIDCONF=\"$(pkgconfdir)/afp_voluuid.conf\" \
+        -ggdb -g -pg
 
 if HAVE_ACLS
 afpd_SOURCES += acls.c

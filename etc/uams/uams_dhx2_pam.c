@@ -34,6 +34,8 @@
 #include <atalk/uam.h>
 #include "../afpd/globals.h"
 
+#include "uams.h"
+
 /* Number of bits for p which we generate. Everybode out there uses 512, so we beet them */
 #define PRIMEBITS 1024
 
@@ -896,7 +898,6 @@ static void uam_cleanup(void)
     gcry_mpi_release(g);
 }
 
-
 UAM_MODULE_EXPORT struct uam_export uams_dhx2 = {
     UAM_MODULE_SERVER,
     UAM_MODULE_VERSION,
@@ -909,5 +910,8 @@ UAM_MODULE_EXPORT struct uam_export uams_dhx2_pam = {
     UAM_MODULE_VERSION,
     uam_setup, uam_cleanup
 };
+
+UAM_STATIC_MOD(UAMS_DHX2, "uams_dhx2", &uams_dhx2);
+UAM_STATIC_MOD(UAMS_DHX2_PAM, "uams_dhx2_pam", &uams_dhx2_pam);
 
 #endif /* USE_PAM && UAM_DHX2 */

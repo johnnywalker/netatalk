@@ -1,6 +1,6 @@
 # Makefile.am for etc/
 
-SUBDIRS = afpd cnid_dbd uams
+SUBDIRS = uams afpd cnid_dbd
 
 if USE_APPLETALK
 SUBDIRS += atalkd papd psf

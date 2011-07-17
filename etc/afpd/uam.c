@@ -65,6 +65,8 @@ char *strchr (), *strrchr ();
 #include <signal.h>
 #endif /* TRU64 */
 
+#include "../uams/uams.h"
+
 /* --- server uam functions -- */
 
 /* uam_load. uams must have a uam_setup function. */
@@ -72,11 +74,18 @@ struct uam_mod *uam_load(const char *path, const char *name)
 {
     char buf[MAXPATHLEN + 1], *p;
     struct uam_mod *mod;
-    void *module;
+    void *module = NULL;
+    struct uam_export *static_mod = NULL;
+    int static_i;
 
-    if ((module = mod_open(path)) == NULL) {
-        LOG(log_error, logtype_afpd, "uam_load(%s): failed to load: %s", name, mod_error());
-        return NULL;
+    /* try to find a static mod first */
+    static_mod = uam_static_mod_get(name);
+
+    if (!static_mod) {
+        if ((module = mod_open(path)) == NULL) {
+            LOG(log_error, logtype_afpd, "uam_load(%s): failed to load: %s", name, mod_error());
+            return NULL;
+        }
     }
 
     if ((mod = (struct uam_mod *) malloc(sizeof(struct uam_mod))) == NULL) {
@@ -88,11 +97,15 @@ struct uam_mod *uam_load(const char *path, const char *name)
     if ((p = strchr(buf, '.')))
         *p = '\0';
 
-    if ((mod->uam_fcn = mod_symbol(module, buf)) == NULL) {
-        LOG(log_error, logtype_afpd, "uam_load(%s): mod_symbol error for symbol %s",
-            name,
-            buf);
-        goto uam_load_err;
+    if (static_mod) {
+        mod->uam_fcn = static_mod;
+    } else {
+        if ((mod->uam_fcn = mod_symbol(module, buf)) == NULL) {
+            LOG(log_error, logtype_afpd, "uam_load(%s): mod_symbol error for symbol %s",
+                name,
+                buf);
+            goto uam_load_err;
+        }
     }
 
     if (mod->uam_fcn->uam_type != UAM_MODULE_SERVER) {
@@ -115,7 +128,8 @@ struct uam_mod *uam_load(const char *path, const char *name)
 uam_load_err:
     free(mod);
 uam_load_fail:
-    mod_close(module);
+    if (module)
+        mod_close(module);
     return NULL;
 }
 
@@ -127,7 +141,8 @@ void uam_unload(struct uam_mod *mod)
     if (mod->uam_fcn->uam_cleanup)
         (*mod->uam_fcn->uam_cleanup)();
 
-    mod_close(mod->uam_module);
+    if (mod->uam_module)
+        mod_close(mod->uam_module);
     free(mod);
 }
 
