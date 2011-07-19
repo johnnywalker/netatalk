@@ -48,8 +48,7 @@ afpd_LDADD =  \
 	$(top_builddir)/libatalk/libatalk.la \
 	@LIBGCRYPT_LIBS@ @ZEROCONF_LIBS@ @QUOTA_LIBS@ @SLP_LIBS@ @WRAP_LIBS@ @LIBADD_DL@ @ACL_LIBS@ @PTHREAD_LIBS@ \
         -lc_p \
-        $(top_builddir)/etc/uams/libuams_dhx_pam.la \
-        $(top_builddir)/etc/uams/libuams_dhx2_pam.la
+        $(top_builddir)/etc/uams/libuams.la
 
 afpd_LDFLAGS = -export-dynamic 
 

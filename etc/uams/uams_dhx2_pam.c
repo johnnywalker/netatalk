@@ -911,7 +911,7 @@ UAM_MODULE_EXPORT struct uam_export uams_dhx2_pam = {
     uam_setup, uam_cleanup
 };
 
-UAM_STATIC_MOD(UAMS_DHX2, "uams_dhx2", &uams_dhx2);
-UAM_STATIC_MOD(UAMS_DHX2_PAM, "uams_dhx2_pam", &uams_dhx2_pam);
+UAM_STATIC_MOD(UAMS_DHX2, "uams_dhx2.so", &uams_dhx2);
+UAM_STATIC_MOD(UAMS_DHX2_PAM, "uams_dhx2_pam.so", &uams_dhx2_pam);
 
 #endif /* USE_PAM && UAM_DHX2 */

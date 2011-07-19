@@ -70,28 +70,28 @@ libuams_gss_la_SOURCES   = uams_gss.c
 # these should be sorted out, applying both to AM_CFLAGS is senseless
 AM_CFLAGS = @SSL_CFLAGS@ @LIBGCRYPT_CFLAGS@
 
-libuams_pam_la_CFLAGS         = @PAM_CFLAGS@
-libuams_dhx_pam_la_CFLAGS     = @SSL_CFLAGS@ @PAM_CFLAGS@
-libuams_dhx2_pam_la_CFLAGS    = @LIBGCRYPT_CFLAGS@ @PAM_CFLAGS@
-libuams_gss_la_CFLAGS   	   = @GSSAPI_CFLAGS@
+libuams_pam_la_CFLAGS               = @PAM_CFLAGS@
+libuams_dhx_pam_la_CFLAGS           = @SSL_CFLAGS@ @PAM_CFLAGS@
+libuams_dhx2_pam_la_CFLAGS          = @LIBGCRYPT_CFLAGS@ @PAM_CFLAGS@
+libuams_gss_la_CFLAGS   	    = @GSSAPI_CFLAGS@
 
-libuams_guest_la_LDFLAGS      =
-libuams_randnum_la_LDFLAGS    = @SSL_LIBS@
-libuams_passwd_la_LDFLAGS     = @CRYPT_LIBS@
-libuams_pam_la_LDFLAGS        = @PAM_LIBS@
-libuams_pgp_la_LDFLAGS        = @SSL_LIBS@
-libuams_dhx_passwd_la_LDFLAGS = @CRYPT_LIBS@ @SSL_LIBS@
-libuams_dhx_pam_la_LDFLAGS		= @CRYPT_LIBS@ @SSL_LIBS@ @PAM_LIBS@
-libuams_dhx2_passwd_la_LDFLAGS	= @CRYPT_LIBS@ @LIBGCRYPT_LIBS@
-libuams_dhx2_pam_la_LDFLAGS	= @LIBGCRYPT_LIBS@ @PAM_LIBS@
-libuams_gss_la_LDFLAGS   	   = @GSSAPI_LIBS@ 
+libuams_guest_la_LDFLAGS            = -static
+libuams_randnum_la_LDFLAGS          = -static @SSL_LIBS@
+libuams_passwd_la_LDFLAGS           = -static @CRYPT_LIBS@
+libuams_pam_la_LDFLAGS              = -static @PAM_LIBS@
+libuams_pgp_la_LDFLAGS              = -static @SSL_LIBS@
+libuams_dhx_passwd_la_LDFLAGS       = -static @CRYPT_LIBS@ @SSL_LIBS@
+libuams_dhx_pam_la_LDFLAGS          = -static @CRYPT_LIBS@ @SSL_LIBS@ @PAM_LIBS@
+libuams_dhx2_passwd_la_LDFLAGS	    = -static @CRYPT_LIBS@ @LIBGCRYPT_LIBS@
+libuams_dhx2_pam_la_LDFLAGS	    = -static @LIBGCRYPT_LIBS@ @PAM_LIBS@
+libuams_gss_la_LDFLAGS   	    = -static @GSSAPI_LIBS@ 
 
 #
 # module compilation
 #
 
 uamsdir = @UAMS_PATH@
-uams_LTLIBRARIES =		\
+noinst_LTLIBRARIES =		\
 	$(UAMS_GENERIC)		\
 	$(UAMS_PGP)		\
 	$(UAMS_PAM)		\
@@ -100,4 +100,21 @@ uams_LTLIBRARIES =		\
 	$(UAMS_DHX_PAM)		\
 	$(UAMS_DHX2)		\
 	$(UAMS_DHX2_PAM)	\
-	$(UAMS_GSSAPI)
+	$(UAMS_GSSAPI)          \
+        libuams.la
+
+libuams_la_SOURCES =            \
+        dummy.c
+
+libuams_la_LIBADD =             \
+	$(UAMS_GENERIC)		\
+	$(UAMS_PGP)		\
+	$(UAMS_PAM)		\
+	$(UAMS_RANDNUM)		\
+	$(UAMS_DHX)		\
+	$(UAMS_DHX_PAM)		\
+	$(UAMS_DHX2)		\
+	$(UAMS_DHX2_PAM)	\
+	$(UAMS_GSSAPI)          
+
+libuams_la_LDFLAGS = -static

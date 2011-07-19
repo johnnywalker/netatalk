@@ -1158,15 +1158,11 @@ int auth_load(const char *path, const char *list)
         /*
           if ((stat(name, &st) == 0) && (mod = uam_load(name, p))) {
         */
-        if (stat(name, &st) == 0) {
-            if ((mod = uam_load(name, p))) {
-                uam_attach(&uam_modules, mod);
-                LOG(log_debug, logtype_afpd, "uam: %s loaded", p);
-            } else {
-                LOG(log_error, logtype_afpd, "uam: %s load failure",p);
-            }
+        if ((mod = uam_load(name, p))) {
+            uam_attach(&uam_modules, mod);
+            LOG(log_debug, logtype_afpd, "uam: %s loaded", p);
         } else {
-            LOG(log_info, logtype_afpd, "uam: uam not found (status=%d)", stat(name, &st));
+            LOG(log_error, logtype_afpd, "uam: %s load failure",p);
         }
         p = strtok(NULL, ",");
     }
