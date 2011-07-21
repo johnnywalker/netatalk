@@ -67,6 +67,8 @@ endif
 install-config-files: $(CONFFILES) $(GENFILES)
 	$(mkinstalldirs) $(DESTDIR)$(pkgconfdir)
 	for f in $(CONFFILES) $(GENFILES); do \
+                echo "$(INSTALL_DATA) $$f $(DESTDIR)$(pkgconfdir)/$$f.dist"; \
+                $(INSTALL_DATA) $$f $(DESTDIR)$(pkgconfdir)/$$f.dist; \
 		if test "x$(OVERWRITE_CONFIG)" = "xyes" -o ! -f $(DESTDIR)$(pkgconfdir)/$$f; then \
 			echo "$(INSTALL_DATA) $$f $(DESTDIR)$(pkgconfdir)"; \
 			$(INSTALL_DATA) $$f $(DESTDIR)$(pkgconfdir); \
