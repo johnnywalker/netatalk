@@ -103,10 +103,20 @@ noinst_LTLIBRARIES =		\
 	$(UAMS_GSSAPI)          \
         libuams.la
 
-libuams_la_SOURCES =            \
-        dummy.c
+libuams_la_SOURCES = dummy.c
 
 libuams_la_LIBADD =             \
+	$(UAMS_GENERIC)		\
+	$(UAMS_PGP)		\
+	$(UAMS_PAM)		\
+	$(UAMS_RANDNUM)		\
+	$(UAMS_DHX)		\
+	$(UAMS_DHX_PAM)		\
+	$(UAMS_DHX2)		\
+	$(UAMS_DHX2_PAM)	\
+	$(UAMS_GSSAPI)          
+
+libuams_la_DEPENDENCIES =       \
 	$(UAMS_GENERIC)		\
 	$(UAMS_PGP)		\
 	$(UAMS_PAM)		\
