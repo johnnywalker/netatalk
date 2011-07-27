@@ -321,6 +321,9 @@ int main(int ac, char **av)
 
     afp_child_t *child;
 
+    /* trying to figure out why poll keeps returning */
+    int intr_count = 0;
+
     /* wait for an appleshare connection. parent remains in the loop
      * while the children get handled by afp_over_{asp,dsi}.  this is
      * currently vulnerable to a denial-of-service attack if a
@@ -356,40 +359,56 @@ int main(int ac, char **av)
             errno = saveerrno;
         }
 
-        if (ret == 0)
-            continue;
+        if (ret == 0) {
+            /* this should never happen! */
+            LOG(log_error, logtype_afpd, "main: poll finished?! this is not good!");
+            break;
+        }
         
         if (ret < 0) {
-            if (errno == EINTR)
-                continue;
+            if (errno == EINTR) {
+                if (++intr_count > 100)
+                {
+                    LOG(log_error, logtype_afpd, "main: too many EINTR! (%d)", intr_count);
+                    break;
+                } else
+                    continue;
+            }
             LOG(log_error, logtype_afpd, "main: can't wait for input: %s", strerror(errno));
             break;
         }
+        intr_count = 0;
 
         for (int i = 0; i < fdset_used; i++) {
-            if (fdset[i].revents & POLLIN) {
-                switch (polldata[i].fdtype) {
-                case LISTEN_FD:
-                    config = (AFPConfig *)polldata[i].data;
-                    /* config->server_start is afp_config.c:dsi_start() for DSI */
-                    if (child = config->server_start(config, configs, server_children)) {
-                        /* Add IPC fd to select fd set */
-                        fdset_add_fd(&fdset, &polldata, &fdset_used, &fdset_size, child->ipc_fds[0], IPC_FD, child);
-                    }
-                    break;
-                case IPC_FD:
-                    child = (afp_child_t *)polldata[i].data;
-                    LOG(log_debug, logtype_afpd, "main: IPC request from child[%u]", child->pid);
-                    if ((ret = ipc_server_read(server_children, child->ipc_fds[0])) == 0) {
-                        fdset_del_fd(&fdset, &polldata, &fdset_used, &fdset_size, child->ipc_fds[0]);
-                        close(child->ipc_fds[0]);
-                        child->ipc_fds[0] = -1;
-                    }
-                    break;
-                default:
-                    LOG(log_debug, logtype_afpd, "main: IPC request for unknown type");
-                    break;
-                } /* switch */
+            if (fdset[i].revents > 0) {
+                if (fdset[i].revents & POLLIN) {
+                    switch (polldata[i].fdtype) {
+                    case LISTEN_FD:
+                        LOG(log_debug, logtype_afpd, "main: IPC request for LISTEN_FD");
+                        config = (AFPConfig *)polldata[i].data;
+                        /* config->server_start is afp_config.c:dsi_start() for DSI */
+                        if (child = config->server_start(config, configs, server_children)) {
+                            /* Add IPC fd to select fd set */
+                            fdset_add_fd(&fdset, &polldata, &fdset_used, &fdset_size, child->ipc_fds[0], IPC_FD, child);
+                        }
+                        break;
+                    case IPC_FD:
+                        LOG(log_debug, logtype_afpd, "main: IPC request for IPC_FD");
+                        child = (afp_child_t *)polldata[i].data;
+                        LOG(log_debug, logtype_afpd, "main: IPC request from child[%u]", child->pid);
+                        if ((ret = ipc_server_read(server_children, child->ipc_fds[0])) == 0) {
+                            fdset_del_fd(&fdset, &polldata, &fdset_used, &fdset_size, child->ipc_fds[0]);
+                            close(child->ipc_fds[0]);
+                            child->ipc_fds[0] = -1;
+                        }
+                        break;
+                    default:
+                        LOG(log_debug, logtype_afpd, "main: IPC request for unknown type");
+                        break;
+                    } /* switch */
+                } else {
+                    LOG(log_error, logtype_afpd, "main: unexpected poll event! (%d)", fdset[i].revents);
+                } /* if */
             }  /* if */
         } /* for (i)*/
     } /* while (1) */
