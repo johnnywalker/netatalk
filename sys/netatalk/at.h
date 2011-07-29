@@ -28,6 +28,13 @@
 #include <sys/types.h>
 #include <netinet/in.h> /* so that we can deal with sun's s_net #define */
 
+#ifdef FREEBSD
+typedef unsigned char  u_char;
+typedef unsigned short u_short;
+typedef unsigned int   u_int;
+typedef unsigned long  u_long;
+#endif
+
 #ifdef MACOSX_SERVER
 #include <netat/appletalk.h>
 #endif /* MACOSX_SERVER */
