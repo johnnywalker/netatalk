@@ -49,6 +49,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#ifdef __FreeBSD__
+#include <sys/resource.h>
+#endif
+
 #ifndef WEXITSTATUS
 #define WEXITSTATUS(stat_val) ((unsigned)(stat_val) >> 8)
 #endif /* ! WEXITSTATUS */
