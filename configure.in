@@ -1008,6 +1008,13 @@ if test x"$with_acl_support" = x"yes" ; then
 		AC_DEFINE(HAVE_SOLARIS_ACLS,1,[Whether solaris ACLs are available])
 		ACL_LIBS="$ACL_LIBS -lsec"
 		;;
+	*freebsd*)
+		AC_MSG_NOTICE(Using SUN ACLs in FreeBSD)
+		AC_DEFINE(HAVE_SOLARIS_ACLS,1,[Whether solaris ACLs are available])
+		AC_DEFINE(HAVE_SUN_ACLS,1,[Whether Sun ACLs are available])
+		ACL_LIBS="$ACL_LIBS -L/usr/local/lib -lsunacl"
+                CFLAGS="$CFLAGS -I '/usr/local/include'"
+		;;
 	*hpux*)
 		AC_MSG_NOTICE(Using HPUX ACLs)
 		AC_DEFINE(HAVE_HPUX_ACLS,1,[Whether HPUX ACLs are available])

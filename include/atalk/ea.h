@@ -24,6 +24,10 @@
 #include <sys/acl.h>
 #endif
 
+#ifdef HAVE_SUN_ACLS
+#include <sunacl.h>
+#endif
+
 #include <atalk/vfs.h>
 
 /*

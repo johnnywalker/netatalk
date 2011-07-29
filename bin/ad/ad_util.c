@@ -52,6 +52,10 @@
 #include <sys/acl.h>
 #endif  /* HAVE_SOLARIS_ACLS */
 
+#ifdef HAVE_SUN_ACLS
+#include <sunacl.h>
+#endif
+
 #ifdef HAVE_POSIX_ACLS
 #include <sys/types.h>
 #include <sys/acl.h>
