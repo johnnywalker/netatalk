@@ -19,6 +19,10 @@
 #include <sys/acl.h>
 #endif
 
+#ifdef HAVE_SUN_ACLS
+#include <sunacl.h>
+#endif
+
 #include <atalk/uuid.h>		/* for atalk_uuid_t */
 
 /*

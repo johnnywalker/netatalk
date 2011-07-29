@@ -26,6 +26,15 @@
 
 #define chmod_acl nfsv4_chmod
 
+#ifdef HAVE_SUN_ACLS
+#include <sunacl.h>
+#endif
+
+#ifdef HAVE_POSIX_ACLS
+#include <sys/types.h>
+#include <sys/acl.h>
+#endif /* HAVE_POSIX_ACLS */
+
 extern int get_nfsv4_acl(const char *name, ace_t **retAces);
 extern int strip_trivial_aces(ace_t **saces, int sacecount);
 extern int strip_nontrivial_aces(ace_t **saces, int sacecount);

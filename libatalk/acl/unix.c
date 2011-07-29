@@ -28,6 +28,9 @@
 #include <time.h>
 #include <errno.h>
 #include <sys/acl.h>
+#ifdef HAVE_SUN_ACLS
+#include <sunacl.h>
+#endif
 
 #include <atalk/logger.h>
 #include <atalk/afp.h>
